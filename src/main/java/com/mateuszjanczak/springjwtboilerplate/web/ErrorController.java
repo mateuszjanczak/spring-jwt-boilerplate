@@ -3,6 +3,7 @@ package com.mateuszjanczak.springjwtboilerplate.web;
 import com.mateuszjanczak.springjwtboilerplate.exception.ErrorMessage;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +25,13 @@ public class ErrorController {
     @ResponseBody
     public ErrorMessage handleJwtException(JwtException ex){
         return new ErrorMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorMessage handleAuthenticationException(AuthenticationException ex) {
+        return new ErrorMessage(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
 }

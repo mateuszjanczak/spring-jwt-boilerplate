@@ -2,7 +2,7 @@ package com.mateuszjanczak.springjwtboilerplate.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ErrorMessage extends Throwable {
+public class ErrorMessage {
 
     private int errorCode;
     private String error;
