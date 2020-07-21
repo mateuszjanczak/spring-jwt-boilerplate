@@ -2,15 +2,15 @@ package com.mateuszjanczak.springjwtboilerplate.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class ErrorMessage {
+public class Error {
 
     private int errorCode;
-    private String error;
+    private String errorName;
     private String errorMessage;
 
-    public ErrorMessage(HttpStatus status, String message) {
+    public Error(HttpStatus status, String message) {
         this.errorCode = status.value();
-        this.error = status.name();
+        this.errorName = status.name();
         this.errorMessage = message;
     }
 
@@ -22,12 +22,12 @@ public class ErrorMessage {
         this.errorCode = errorCode;
     }
 
-    public String getError() {
-        return error;
+    public String getErrorName() {
+        return errorName;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setErrorName(String errorName) {
+        this.errorName = errorName;
     }
 
     public String getErrorMessage() {
@@ -39,7 +39,7 @@ public class ErrorMessage {
     }
 
     public String toJson() {
-        return "{ \"errorCode\": " + "\"" + errorCode+"\", \"error\": " + "\"" + error + "\", \"errorMessage\": " + "\"" + errorMessage.replace("\"", "'") + "\" }";
+        return "{ \"errorCode\": " + "\"" + errorCode+"\", \"errorName\": " + "\"" + errorName + "\", \"errorMessage\": " + "\"" + errorMessage.replace("\"", "'") + "\" }";
     }
 
 }

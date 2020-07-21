@@ -1,6 +1,6 @@
 package com.mateuszjanczak.springjwtboilerplate.security;
 
-import com.mateuszjanczak.springjwtboilerplate.exception.ErrorMessage;
+import com.mateuszjanczak.springjwtboilerplate.exception.Error;
 import com.mateuszjanczak.springjwtboilerplate.web.ErrorController;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -46,10 +46,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 response.addHeader(JwtProvider.AUTHORIZATION_HEADER, jwtProvider.createToken(user.getUsername()));
             } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException ex){
-                ErrorMessage errorMessage = errorController.handleJwtException(ex);
-                response.setStatus(errorMessage.getErrorCode());
+                Error error = errorController.handleJwtException(ex);
+                response.setStatus(error.getErrorCode());
                 response.setContentType("application/json");
-                response.getOutputStream().write(errorMessage.toJson().getBytes());
+                response.getOutputStream().write(error.toJson().getBytes());
                 return;
             }
         }
