@@ -2,18 +2,18 @@ package com.mateuszjanczak.springjwtboilerplate.service;
 
 import com.mateuszjanczak.springjwtboilerplate.dto.LoginRequest;
 import com.mateuszjanczak.springjwtboilerplate.dto.RegisterRequest;
-import com.mateuszjanczak.springjwtboilerplate.security.JwtProvider;
-import com.mateuszjanczak.springjwtboilerplate.security.JwtToken;
-import com.mateuszjanczak.springjwtboilerplate.repository.RoleRepository;
-import com.mateuszjanczak.springjwtboilerplate.repository.UserRepository;
 import com.mateuszjanczak.springjwtboilerplate.entity.Role;
 import com.mateuszjanczak.springjwtboilerplate.entity.RoleName;
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
+import com.mateuszjanczak.springjwtboilerplate.repository.RoleRepository;
+import com.mateuszjanczak.springjwtboilerplate.repository.UserRepository;
+import com.mateuszjanczak.springjwtboilerplate.security.JwtProvider;
+import com.mateuszjanczak.springjwtboilerplate.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,4 +54,9 @@ public class AuthServiceImpl implements AuthService {
         user.setRoles(Collections.singletonList(roleUser.orElseGet(() -> roleRepository.save(new Role(RoleName.ROLE_USER)))));
         return userRepository.save(user);
     }
+
+    public User getLoggedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
 }

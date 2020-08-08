@@ -1,5 +1,7 @@
 package com.mateuszjanczak.springjwtboilerplate.service;
 
-public interface UserService {
+import com.mateuszjanczak.springjwtboilerplate.entity.User;
 
+public interface UserService {
+    User loadUserByUsername(String username);
 }

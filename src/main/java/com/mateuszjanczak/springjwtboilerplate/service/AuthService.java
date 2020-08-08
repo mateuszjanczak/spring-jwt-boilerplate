@@ -9,5 +9,6 @@ public interface AuthService {
 
     JwtToken login(LoginRequest loginRequest);
     User register(RegisterRequest registerRequest);
+    User getLoggedUser();
 
 }

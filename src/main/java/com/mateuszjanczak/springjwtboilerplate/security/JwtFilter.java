@@ -1,6 +1,8 @@
 package com.mateuszjanczak.springjwtboilerplate.security;
 
+import com.mateuszjanczak.springjwtboilerplate.entity.User;
 import com.mateuszjanczak.springjwtboilerplate.exception.Error;
+import com.mateuszjanczak.springjwtboilerplate.service.UserService;
 import com.mateuszjanczak.springjwtboilerplate.web.ErrorController;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -9,8 +11,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,13 +24,13 @@ import java.util.Objects;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
     private final JwtProvider jwtProvider;
     private final ErrorController errorController;
 
     @Autowired
-    public JwtFilter(UserDetailsService userDetailsService, JwtProvider jwtProvider, ErrorController errorController) {
-        this.userDetailsService = userDetailsService;
+    public JwtFilter(UserService userService, JwtProvider jwtProvider, ErrorController errorController) {
+        this.userService = userService;
         this.jwtProvider = jwtProvider;
         this.errorController = errorController;
     }
@@ -41,8 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
         if(checkHeader(header)){
            try {
                 String username = jwtProvider.parseHeader(header);
-                UserDetails user = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
+                User user = userService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 response.addHeader(JwtProvider.AUTHORIZATION_HEADER, jwtProvider.createToken(user.getUsername()));
             } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException ex){
