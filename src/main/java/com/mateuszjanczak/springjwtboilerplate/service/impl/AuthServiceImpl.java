@@ -1,14 +1,15 @@
-package com.mateuszjanczak.springjwtboilerplate.service;
+package com.mateuszjanczak.springjwtboilerplate.service.impl;
 
 import com.mateuszjanczak.springjwtboilerplate.dto.LoginRequest;
 import com.mateuszjanczak.springjwtboilerplate.dto.RegisterRequest;
 import com.mateuszjanczak.springjwtboilerplate.entity.Role;
-import com.mateuszjanczak.springjwtboilerplate.entity.RoleName;
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
-import com.mateuszjanczak.springjwtboilerplate.repository.RoleRepository;
-import com.mateuszjanczak.springjwtboilerplate.repository.UserRepository;
+import com.mateuszjanczak.springjwtboilerplate.exception.UsernameIsAlreadyTakenException;
 import com.mateuszjanczak.springjwtboilerplate.security.JwtProvider;
 import com.mateuszjanczak.springjwtboilerplate.security.JwtToken;
+import com.mateuszjanczak.springjwtboilerplate.service.AuthService;
+import com.mateuszjanczak.springjwtboilerplate.service.RoleService;
+import com.mateuszjanczak.springjwtboilerplate.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -26,16 +26,16 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public AuthServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, UserRepository userRepository, RoleRepository roleRepository) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, UserService userService, RoleService roleService) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
+        this.userService = userService;
     }
 
     public JwtToken login(LoginRequest loginRequest) {
@@ -46,13 +46,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public User register(RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername();
+        if(userService.findByUsername(username).isPresent()) throw new UsernameIsAlreadyTakenException(username);
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEmail(registerRequest.getEmail());
-        Optional<Role> roleUser = roleRepository.findByName(RoleName.ROLE_USER);
-        user.setRoles(Collections.singletonList(roleUser.orElseGet(() -> roleRepository.save(new Role(RoleName.ROLE_USER)))));
-        return userRepository.save(user);
+        Role roleUser = roleService.getRoleUser();
+        user.setRoles(Collections.singletonList(roleUser));
+        return userService.save(user);
     }
 
     public User getLoggedUser() {

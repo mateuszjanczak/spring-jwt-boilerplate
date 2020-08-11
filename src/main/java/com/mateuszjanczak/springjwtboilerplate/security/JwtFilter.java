@@ -1,7 +1,7 @@
 package com.mateuszjanczak.springjwtboilerplate.security;
 
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
-import com.mateuszjanczak.springjwtboilerplate.exception.Error;
+import com.mateuszjanczak.springjwtboilerplate.dto.error.ErrorResponse;
 import com.mateuszjanczak.springjwtboilerplate.service.UserService;
 import com.mateuszjanczak.springjwtboilerplate.web.ErrorController;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -11,6 +11,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -46,10 +47,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 response.addHeader(JwtProvider.AUTHORIZATION_HEADER, jwtProvider.createToken(user.getUsername()));
             } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException ex){
-                Error error = errorController.handleJwtException(ex);
-                response.setStatus(error.getErrorCode());
-                response.setContentType("application/json");
-                response.getOutputStream().write(error.toJson().getBytes());
+                ErrorResponse errorResponse = errorController.handleJwtException(ex);
+                setErrorResponse(response, errorResponse);
+                return;
+            } catch (UsernameNotFoundException ex) {
+                ErrorResponse errorResponse = errorController.handleUsernameNotFoundException(ex);
+                setErrorResponse(response, errorResponse);
                 return;
             }
         }
@@ -58,6 +61,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private boolean checkHeader(String header) {
         return !Objects.isNull(header) && header.startsWith(JwtProvider.TOKEN_PREFIX);
+    }
+
+    private void setErrorResponse(HttpServletResponse response, ErrorResponse errorResponse) throws IOException {
+        response.setStatus(errorResponse.getErrorCode());
+        response.setContentType("application/json");
+        response.getOutputStream().write(errorResponse.toJson().getBytes());
     }
 
 }
