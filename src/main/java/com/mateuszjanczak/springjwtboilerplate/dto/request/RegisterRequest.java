@@ -1,4 +1,4 @@
-package com.mateuszjanczak.springjwtboilerplate.dto;
+package com.mateuszjanczak.springjwtboilerplate.dto.request;
 
 import javax.validation.constraints.NotNull;
 

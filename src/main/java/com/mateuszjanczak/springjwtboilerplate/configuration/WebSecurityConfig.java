@@ -1,10 +1,9 @@
 package com.mateuszjanczak.springjwtboilerplate.configuration;
 
 import com.mateuszjanczak.springjwtboilerplate.security.JwtFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mateuszjanczak.springjwtboilerplate.web.rest.AuthController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,7 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -21,34 +22,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
 
-    @Autowired
-    public WebSecurityConfig(JwtFilter jwtFilter){
+    public WebSecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-            //.headers().frameOptions().disable().and() // H2-CONSOLE
-            //.authorizeRequests().antMatchers("/h2-console/*").permitAll().and() // H2-CONSOLE
-            .authorizeRequests()
-                .antMatchers("/auth/*").permitAll()
+        http.cors().disable();
+        http.csrf().disable();
+        http.addFilterAfter(jwtFilter, BasicAuthenticationFilter.class);
+        http.authorizeRequests()
+                .antMatchers(AuthController.PATH_POST_LOGIN).permitAll()
+                .antMatchers(AuthController.PATH_POST_SIGN_UP).permitAll()
                 .antMatchers("/test/guest").permitAll()
-            .anyRequest().authenticated()
-                .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .anyRequest().authenticated();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
+            response.setHeader("WWW-Authenticate", "Bearer");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        });
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
 }

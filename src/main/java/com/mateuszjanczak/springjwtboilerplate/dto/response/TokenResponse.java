@@ -1,4 +1,4 @@
-package com.mateuszjanczak.springjwtboilerplate.dto;
+package com.mateuszjanczak.springjwtboilerplate.dto.response;
 
 public class TokenResponse {
 

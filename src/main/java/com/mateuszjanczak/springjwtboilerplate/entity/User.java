@@ -1,6 +1,5 @@
 package com.mateuszjanczak.springjwtboilerplate.entity;
 
-import com.mateuszjanczak.springjwtboilerplate.dto.UserResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -125,10 +124,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public UserResponse toResponse() {
-        return new UserResponse(username, email, roles);
     }
 
 }
