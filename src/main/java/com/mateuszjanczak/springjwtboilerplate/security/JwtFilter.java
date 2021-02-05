@@ -44,9 +44,11 @@ public class JwtFilter extends GenericFilterBean {
             String token = header.replace(JwtProvider.TOKEN_PREFIX, "");
             Authentication authentication = getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception ex) {
+        } catch (Exception ex){
             filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private Authentication getAuthentication(String token) {

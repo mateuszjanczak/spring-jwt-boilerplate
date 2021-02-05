@@ -96,4 +96,10 @@ public class AuthServiceImpl implements AuthService {
         return userRefreshTokenRepository.findByToken(refreshToken)
                 .map(userRefreshToken -> new TokenResponse(jwtProvider.createToken(userRefreshToken.getUser().getUsername())));
     }
+
+    @Override
+    public void logout(String refreshToken) {
+        userRefreshTokenRepository.findByToken(refreshToken)
+                .ifPresent(userRefreshTokenRepository::delete);
+    }
 }
