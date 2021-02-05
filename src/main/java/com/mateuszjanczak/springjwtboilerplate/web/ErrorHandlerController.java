@@ -2,6 +2,7 @@ package com.mateuszjanczak.springjwtboilerplate.web;
 
 import com.mateuszjanczak.springjwtboilerplate.dto.error.ErrorResponse;
 import com.mateuszjanczak.springjwtboilerplate.dto.error.ValidationErrorResponse;
+import com.mateuszjanczak.springjwtboilerplate.exception.InvalidRefreshTokenException;
 import com.mateuszjanczak.springjwtboilerplate.exception.UserNotFoundException;
 import com.mateuszjanczak.springjwtboilerplate.exception.WrongPasswordException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -39,7 +40,15 @@ public class ErrorHandlerController {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public ErrorResponse handleWrongPasswordException(WrongPasswordException ex) {
-        String errorMessage = "Wrong password";
+        String errorMessage = "Invalid password";
+        return new ErrorResponse(HttpStatus.FORBIDDEN, errorMessage);
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        String errorMessage = "Invalid refresh token";
         return new ErrorResponse(HttpStatus.FORBIDDEN, errorMessage);
     }
 }

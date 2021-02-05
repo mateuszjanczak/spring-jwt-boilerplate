@@ -34,6 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(AuthController.PATH_POST_LOGIN).permitAll()
                 .antMatchers(AuthController.PATH_POST_SIGN_UP).permitAll()
+                .antMatchers(AuthController.PATH_POST_REFRESH_TOKEN).permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/h2-console").permitAll()
                 .antMatchers("/test/guest").permitAll()
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -41,6 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             response.setHeader("WWW-Authenticate", "Bearer");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         });
+        http.headers().frameOptions().disable();
+
     }
 
     @Bean
