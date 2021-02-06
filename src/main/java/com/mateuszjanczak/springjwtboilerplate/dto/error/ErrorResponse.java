@@ -41,5 +41,4 @@ public class ErrorResponse {
     public String toJson() {
         return "{ \"errorCode\": " + "\"" + errorCode+"\", \"errorName\": " + "\"" + errorName + "\", \"errorMessage\": " + "\"" + errorMessage.replace("\"", "'") + "\" }";
     }
-
 }

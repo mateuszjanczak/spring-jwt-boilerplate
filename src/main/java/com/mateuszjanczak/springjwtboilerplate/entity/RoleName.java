@@ -2,8 +2,8 @@ package com.mateuszjanczak.springjwtboilerplate.entity;
 
 public enum RoleName {
 
-    role_user("user"),
-    role_admin("admin");
+    ROLE_USER("USER"),
+    ROLE_ADMIN("ADMIN");
 
     public final String label;
 

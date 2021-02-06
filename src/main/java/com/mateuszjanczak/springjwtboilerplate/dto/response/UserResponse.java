@@ -1,4 +1,4 @@
-package com.mateuszjanczak.springjwtboilerplate.dto;
+package com.mateuszjanczak.springjwtboilerplate.dto.response;
 
 import com.mateuszjanczak.springjwtboilerplate.entity.Role;
 import com.mateuszjanczak.springjwtboilerplate.entity.RoleName;

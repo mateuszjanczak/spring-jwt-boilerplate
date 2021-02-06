@@ -1,16 +1,16 @@
-package com.mateuszjanczak.springjwtboilerplate.dto;
+package com.mateuszjanczak.springjwtboilerplate.dto.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class RegisterRequest {
 
-    @NotNull(message = "Email cannot be null")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
 
-    @NotNull(message = "Username cannot be null")
+    @NotBlank(message = "Username cannot be blank")
     private String username;
 
-    @NotNull(message = "Password cannot be null")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     public RegisterRequest() {

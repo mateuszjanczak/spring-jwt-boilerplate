@@ -1,12 +1,10 @@
 package com.mateuszjanczak.springjwtboilerplate.entity;
 
-import com.mateuszjanczak.springjwtboilerplate.dto.UserResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,19 +16,15 @@ public class User implements UserDetails {
     @Column(name = "ID")
     private Long id;
 
-    @NotNull
-    @Column(name = "EMAIL", unique = true)
+    @Column(name = "EMAIL", unique = true, nullable = false)
     private String email;
 
-    @NotNull
-    @Column(name = "USERNAME", unique = true)
+    @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
 
-    @NotNull
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @NotNull
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_ROLE", joinColumns = {@JoinColumn(name = "USER_ID")}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
     private List<Role> roles;
@@ -125,10 +119,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public UserResponse toResponse() {
-        return new UserResponse(username, email, roles);
     }
 
 }

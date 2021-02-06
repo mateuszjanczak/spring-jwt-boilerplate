@@ -1,13 +1,13 @@
-package com.mateuszjanczak.springjwtboilerplate.dto;
+package com.mateuszjanczak.springjwtboilerplate.dto.request;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
 
-    @NotNull(message = "Username cannot be null")
+    @NotBlank(message = "Username cannot be blank")
     private String username;
 
-    @NotNull(message = "Password cannot be null")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     public LoginRequest() {

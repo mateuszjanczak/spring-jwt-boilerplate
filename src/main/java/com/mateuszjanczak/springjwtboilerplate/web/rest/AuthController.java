@@ -1,27 +1,29 @@
 package com.mateuszjanczak.springjwtboilerplate.web.rest;
 
-import com.mateuszjanczak.springjwtboilerplate.dto.LoginRequest;
-import com.mateuszjanczak.springjwtboilerplate.dto.RegisterRequest;
-import com.mateuszjanczak.springjwtboilerplate.dto.TokenResponse;
-import com.mateuszjanczak.springjwtboilerplate.security.JwtProvider;
-import com.mateuszjanczak.springjwtboilerplate.security.JwtToken;
-import com.mateuszjanczak.springjwtboilerplate.service.AuthService;
-import com.mateuszjanczak.springjwtboilerplate.dto.UserResponse;
+import com.mateuszjanczak.springjwtboilerplate.dto.request.LoginRequest;
+import com.mateuszjanczak.springjwtboilerplate.dto.request.RefreshTokenRequest;
+import com.mateuszjanczak.springjwtboilerplate.dto.request.RegisterRequest;
+import com.mateuszjanczak.springjwtboilerplate.dto.response.LoginResponse;
+import com.mateuszjanczak.springjwtboilerplate.dto.response.TokenResponse;
+import com.mateuszjanczak.springjwtboilerplate.dto.response.UserResponse;
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
+import com.mateuszjanczak.springjwtboilerplate.exception.InvalidRefreshTokenException;
+import com.mateuszjanczak.springjwtboilerplate.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
+
+    public static final String PATH_POST_LOGIN = "/auth/login";
+    public static final String PATH_POST_SIGN_UP = "/auth/register";
+    public static final String PATH_POST_REFRESH_TOKEN = "/auth/token/refresh";
+    public static final String PATH_DELETE_LOGOUT = "/auth/logout";
+    private static final String PATH_GET_ME = "/auth/me";
 
     private final AuthService authService;
 
@@ -30,17 +32,32 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        JwtToken token = authService.login(loginRequest);
-        response.addHeader(JwtProvider.AUTHORIZATION_HEADER, token.toHeader());
-        return new ResponseEntity<>(token.toResponse(), HttpStatus.OK);
+    @PostMapping(PATH_POST_LOGIN)
+    public ResponseEntity<LoginResponse> userPostLogin(@Valid @RequestBody LoginRequest loginRequest) {
+        LoginResponse loginResponse = authService.login(loginRequest);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        User user = authService.register(registerRequest);
-        return new ResponseEntity<>(user.toResponse(), HttpStatus.CREATED);
+    @PostMapping(PATH_POST_SIGN_UP)
+    public ResponseEntity<UserResponse> userPostRegister(@Valid @RequestBody RegisterRequest registerRequest) {
+        UserResponse userResponse = authService.register(registerRequest);
+        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
+    @PostMapping(PATH_POST_REFRESH_TOKEN)
+    public @ResponseBody TokenResponse tokenPostRefresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return authService.refreshToken(refreshTokenRequest.getRefreshToken()).orElseThrow(InvalidRefreshTokenException::new);
+    }
+
+    @DeleteMapping(PATH_DELETE_LOGOUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void tokenDeleteLogout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        authService.logout(refreshTokenRequest.getRefreshToken());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(path = PATH_GET_ME, method = RequestMethod.GET)
+    public @ResponseBody User tokenGetMe() {
+        return authService.getLoggedUser();
+    }
 }

@@ -2,8 +2,8 @@ package com.mateuszjanczak.springjwtboilerplate.service;
 
 import com.mateuszjanczak.springjwtboilerplate.entity.Role;
 
-public interface RoleService {
-
+public interface UserRoleService {
     Role getRoleUser();
 
+    Role getRoleAdmin();
 }

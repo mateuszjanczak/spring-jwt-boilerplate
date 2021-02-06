@@ -27,16 +27,11 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String parseToken(String token) {
+    public String getUsernameFromToken(String token) {
          return Jwts.parser()
                 .setSigningKey(SECRET.getBytes())
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
-
-    public String parseHeader(String header) {
-        return parseToken(header.replace(TOKEN_PREFIX, ""));
-    }
-
 }
