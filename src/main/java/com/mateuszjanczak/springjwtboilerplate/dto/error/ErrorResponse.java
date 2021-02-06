@@ -37,4 +37,8 @@ public class ErrorResponse {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    public String toJson() {
+        return "{ \"errorCode\": " + "\"" + errorCode+"\", \"errorName\": " + "\"" + errorName + "\", \"errorMessage\": " + "\"" + errorMessage.replace("\"", "'") + "\" }";
+    }
 }

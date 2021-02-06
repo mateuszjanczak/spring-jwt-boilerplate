@@ -1,7 +1,10 @@
 package com.mateuszjanczak.springjwtboilerplate.security;
 
+import com.mateuszjanczak.springjwtboilerplate.dto.error.ErrorResponse;
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
 import com.mateuszjanczak.springjwtboilerplate.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +48,12 @@ public class JwtFilter extends GenericFilterBean {
             Authentication authentication = getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception ex){
-            filterChain.doFilter(request, response);
+            // DEV JWT DEBUG
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getOutputStream().write(new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage()).toJson().getBytes());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return;
+            // DEV JWT DEBUG
         }
 
         filterChain.doFilter(request, response);

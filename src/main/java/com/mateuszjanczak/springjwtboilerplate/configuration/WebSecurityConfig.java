@@ -1,9 +1,12 @@
 package com.mateuszjanczak.springjwtboilerplate.configuration;
 
+import com.mateuszjanczak.springjwtboilerplate.dto.error.ErrorResponse;
 import com.mateuszjanczak.springjwtboilerplate.security.JwtFilter;
 import com.mateuszjanczak.springjwtboilerplate.web.rest.AuthController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,8 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -40,8 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setHeader("WWW-Authenticate", "Bearer");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            response.getOutputStream().write(new ErrorResponse(HttpStatus.UNAUTHORIZED, authException.getMessage()).toJson().getBytes());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         });
     }
 
