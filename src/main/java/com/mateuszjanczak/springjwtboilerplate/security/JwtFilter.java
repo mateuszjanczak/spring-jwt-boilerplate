@@ -3,11 +3,13 @@ package com.mateuszjanczak.springjwtboilerplate.security;
 import com.mateuszjanczak.springjwtboilerplate.dto.error.ErrorResponse;
 import com.mateuszjanczak.springjwtboilerplate.entity.User;
 import com.mateuszjanczak.springjwtboilerplate.service.UserService;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -47,13 +49,19 @@ public class JwtFilter extends GenericFilterBean {
             String token = header.replace(JwtProvider.TOKEN_PREFIX, "");
             Authentication authentication = getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception ex){
+        } catch (JwtException ex){
             // DEV JWT DEBUG
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getOutputStream().write(new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage()).toJson().getBytes());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return;
             // DEV JWT DEBUG
+        } catch (UsernameNotFoundException ex) {
+            String errorMessage = "User not found";
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getOutputStream().write(new ErrorResponse(HttpStatus.UNAUTHORIZED, errorMessage).toJson().getBytes());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
 
         filterChain.doFilter(request, response);

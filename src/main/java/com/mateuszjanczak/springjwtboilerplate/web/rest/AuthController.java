@@ -6,6 +6,7 @@ import com.mateuszjanczak.springjwtboilerplate.dto.request.RegisterRequest;
 import com.mateuszjanczak.springjwtboilerplate.dto.response.LoginResponse;
 import com.mateuszjanczak.springjwtboilerplate.dto.response.TokenResponse;
 import com.mateuszjanczak.springjwtboilerplate.dto.response.UserResponse;
+import com.mateuszjanczak.springjwtboilerplate.entity.User;
 import com.mateuszjanczak.springjwtboilerplate.exception.InvalidRefreshTokenException;
 import com.mateuszjanczak.springjwtboilerplate.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class AuthController {
     public static final String PATH_POST_SIGN_UP = "/account/register";
     public static final String PATH_POST_REFRESH_TOKEN = "/account/token/refresh";
     public static final String PATH_DELETE_LOGOUT = "/account/logout";
+    private static final String PATH_GET_ME = "/account/me";
 
     private final AuthService authService;
 
@@ -51,5 +53,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void tokenDeleteLogout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         authService.logout(refreshTokenRequest.getRefreshToken());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(path = PATH_GET_ME, method = RequestMethod.GET)
+    public @ResponseBody User tokenGetMe() {
+        return authService.getLoggedUser();
     }
 }

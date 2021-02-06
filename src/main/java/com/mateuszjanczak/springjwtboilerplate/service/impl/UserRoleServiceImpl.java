@@ -17,6 +17,11 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public Role getRoleUser() {
-        return userRoleRepository.findByName(RoleName.role_user).orElseGet(() -> userRoleRepository.save(new Role(RoleName.role_user)));
+        return userRoleRepository.findByName(RoleName.ROLE_USER).orElseGet(() -> userRoleRepository.save(new Role(RoleName.ROLE_USER)));
+    }
+
+    @Override
+    public Role getRoleAdmin() {
+        return userRoleRepository.findByName(RoleName.ROLE_ADMIN).orElseGet(() -> userRoleRepository.save(new Role(RoleName.ROLE_ADMIN)));
     }
 }

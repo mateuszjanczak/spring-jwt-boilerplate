@@ -4,4 +4,6 @@ import com.mateuszjanczak.springjwtboilerplate.entity.Role;
 
 public interface UserRoleService {
     Role getRoleUser();
+
+    Role getRoleAdmin();
 }
