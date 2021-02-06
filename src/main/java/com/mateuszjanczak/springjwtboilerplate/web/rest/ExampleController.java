@@ -1,7 +1,7 @@
 package com.mateuszjanczak.springjwtboilerplate.web.rest;
 
 import com.mateuszjanczak.springjwtboilerplate.security.SecurityService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,13 +27,13 @@ public class ExampleController {
     }
 
     @GetMapping("/roleUser")
-    @PreAuthorize("hasRole('USER')")
+    @Secured("ROLE_USER")
     String roleUser() {
         return "you have access for role - user";
     }
 
     @GetMapping("/roleAdmin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     String roleAdmin() {
         return "you have access for role - admin";
     }

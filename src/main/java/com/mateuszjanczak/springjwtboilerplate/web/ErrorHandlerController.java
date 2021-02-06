@@ -43,7 +43,7 @@ public class ErrorHandlerController {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public ErrorResponse handleWrongPasswordException(WrongPasswordException ex) {
-        String errorMessage = "Invalid password";
+        String errorMessage = "Incorrect login details";
         return new ErrorResponse(HttpStatus.FORBIDDEN, errorMessage);
     }
 

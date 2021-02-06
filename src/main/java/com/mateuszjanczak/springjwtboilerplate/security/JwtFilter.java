@@ -57,7 +57,7 @@ public class JwtFilter extends GenericFilterBean {
             return;
             // DEV JWT DEBUG
         } catch (UsernameNotFoundException ex) {
-            String errorMessage = "User not found";
+            String errorMessage = "User not exist";
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getOutputStream().write(new ErrorResponse(HttpStatus.UNAUTHORIZED, errorMessage).toJson().getBytes());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

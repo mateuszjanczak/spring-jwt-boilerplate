@@ -19,11 +19,11 @@ import javax.validation.Valid;
 @RestController
 public class AuthController {
 
-    public static final String PATH_POST_LOGIN = "/account/login";
-    public static final String PATH_POST_SIGN_UP = "/account/register";
-    public static final String PATH_POST_REFRESH_TOKEN = "/account/token/refresh";
-    public static final String PATH_DELETE_LOGOUT = "/account/logout";
-    private static final String PATH_GET_ME = "/account/me";
+    public static final String PATH_POST_LOGIN = "/auth/login";
+    public static final String PATH_POST_SIGN_UP = "/auth/register";
+    public static final String PATH_POST_REFRESH_TOKEN = "/auth/token/refresh";
+    public static final String PATH_DELETE_LOGOUT = "/auth/logout";
+    private static final String PATH_GET_ME = "/auth/me";
 
     private final AuthService authService;
 
