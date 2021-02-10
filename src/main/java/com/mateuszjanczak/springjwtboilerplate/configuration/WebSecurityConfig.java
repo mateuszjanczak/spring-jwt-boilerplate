@@ -34,10 +34,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable(); // DEV
         http.addFilterAfter(jwtFilter, BasicAuthenticationFilter.class);
         http.authorizeRequests()
-                .antMatchers(AuthController.PATH_POST_SIGN_UP).permitAll()
-                .antMatchers(AuthController.PATH_POST_REFRESH_TOKEN).permitAll()
-                .antMatchers(AuthController.PATH_POST_LOGIN).permitAll()
-                .antMatchers("/h2-console/**").permitAll() // DEV
+                .mvcMatchers(AuthController.PATH_POST_SIGN_UP).permitAll()
+                .mvcMatchers(AuthController.PATH_POST_REFRESH_TOKEN).permitAll()
+                .mvcMatchers(AuthController.PATH_POST_LOGIN).permitAll()
+                .mvcMatchers("/h2-console/**").permitAll() // DEV
                 .anyRequest().authenticated();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
