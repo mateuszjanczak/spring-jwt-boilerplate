@@ -6,7 +6,7 @@ Przykładowa aplikacja z zaimplementowanym uwierzytelnieniem z wykorzystaniem JW
 * Spring Security
 * Spring Data JPA
 * H2 Database
-* Json Web Tokens
+* JSON Web Tokens
 
 ### Endpointy
 
